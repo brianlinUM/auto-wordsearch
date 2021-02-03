@@ -2,7 +2,7 @@ import string
 import random
 
 class Wordsearch_Generator:
-    def __init__(self, wordlist, size=12, seed=None):
+    def __init__(self, wordlist, size=12):
         '''Initialize wordsearch generator.'''
         if type(size) != int or size < 0:
             raise Exception("size needs to be a positive int")
@@ -16,11 +16,6 @@ class Wordsearch_Generator:
             if len(word) > self.size:
                 raise Exception(f"word: {word} does not fit in puzzle of size {size}")
         self.wordlist = [word.upper() for word in wordlist]
-
-        if seed is not None and type(seed) != int:
-            raise Exception("seed needs to be None or int")
-        self.seed = seed
-        random.seed(a=seed)
         
         self.wordsearch_arr = [[None] * size for i in range(size)]
         self.solution = []
@@ -33,11 +28,14 @@ class Wordsearch_Generator:
             self.print_wordsearch()
 
 
-    def insert_words(self, max_tries=10):
+    def reset_array(self):
+        self.wordsearch_arr = [[None] * self.size for i in range(self.size)]
+
+
+    def insert_words(self, max_tries=2):
         '''Insert words from wordlist into random positions of array.'''
         for word in self.wordlist:
             if not self.try_insert_word(word, max_tries):
-                self.print_wordsearch()
                 raise Exception(f"Was not able to insert word: {word} within {max_tries} tries.")
 
 
@@ -57,6 +55,10 @@ class Wordsearch_Generator:
                     # found a valid insertion position, so break out to insert
                     # next word.
                     return True
+            # When trying a new set of insertions, need to start with empty array
+            self.reset_array()
+            # Also need to generate new seed
+            random.seed(random.random())
         return False
 
 
@@ -178,9 +180,10 @@ if __name__ ==  "__main__":
     test = Wordsearch_Generator(["HAPPY", "APPLE", "LUCKY"], size=5)
     test.insert_words()
     test.print_wordsearch()
+    test.print_solutions()
     '''
     fail_count = 0
-    for i in range(100):
+    for i in range(10000):
         test = Wordsearch_Generator(["HAPPY", "APPLE", "LUCKY"], size=5)
         try:
             test.insert_words()
