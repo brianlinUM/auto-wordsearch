@@ -36,30 +36,28 @@ class Wordsearch_Generator:
     def insert_words(self, max_tries=10):
         '''Insert words from wordlist into random positions of array.'''
         for word in self.wordlist:
-            tries_done = 0
-            inserted = False
-            # maintains positions left to sample from, to prevent resampling
-            while not inserted:
-                tries_done += 1
-                possible_positions = self.get_possible_positions(len(word))
-                while len(possible_positions) != 0:
-                    start = random.sample(possible_positions, 1)[0]
-                    possible_positions.remove(start)
-                    possible_directions = self.get_possible_directions(start, word)
-                    if len(possible_directions) != 0:
-                        (change_i, change_j), is_reversed = random.choice(possible_directions)
-                        self.solution.append((word, start, (change_i, change_j)))
-                        if is_reversed:
-                            word = word[::-1]
-                        self.insert_word(word, start, change_i, change_j)
-                        # found a valid insertion position, so break out to insert
-                        # next word.
-                        inserted = True
-                        break
-                    # if no possible directions, then resample
-                if tries_done == max_tries and not inserted:
-                    raise Exception("ERROR")
+            if not self.try_insert_word(word, max_tries):
+                self.print_wordsearch()
+                raise Exception(f"Was not able to insert word: {word} within {max_tries} tries.")
 
+
+    def try_insert_word(self, word, max_tries):
+        for _ in range(max_tries):
+            possible_positions = self.get_possible_positions(len(word))
+            while len(possible_positions) != 0:
+                start = random.sample(possible_positions, 1)[0]
+                possible_positions.remove(start)
+                possible_directions = self.get_possible_directions(start, word)
+                if len(possible_directions) != 0:
+                    (change_i, change_j), is_reversed = random.choice(possible_directions)
+                    self.solution.append((word, start, (change_i, change_j)))
+                    if is_reversed:
+                        word = word[::-1]
+                    self.insert_word(word, start, change_i, change_j)
+                    # found a valid insertion position, so break out to insert
+                    # next word.
+                    return True
+        return False
 
 
     def get_possible_positions(self, word_len):
@@ -177,19 +175,16 @@ class Wordsearch_Generator:
 
 if __name__ ==  "__main__":
     #"HAPPY", "APPLE", "LUCKY"
+    test = Wordsearch_Generator(["HAPPY", "APPLE", "LUCKY"], size=5)
+    test.insert_words()
+    test.print_wordsearch()
+    '''
     fail_count = 0
-    for i in range(1000):
+    for i in range(100):
         test = Wordsearch_Generator(["HAPPY", "APPLE", "LUCKY"], size=5)
         try:
             test.insert_words()
         except Exception:
             fail_count += 1
     print(fail_count)
-    #test.randomize()
-    #test.insert_word("APPLE",(0,0), 1, 1, False)
-    #test.generate_puzzle(print_puzzle=False)
-    #test.print_wordsearch()
-    #test.print_solutions()
-    #print("@@@")
-    #test.insert_words()
-    #test.print_wordsearch()
+    '''
