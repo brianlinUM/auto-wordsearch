@@ -15,6 +15,7 @@ class Wordsearch_Generator:
                 raise Exception("wordlist does not consist of non-empty str")
             if len(word) > self.size:
                 raise Exception(f"word: {word} does not fit in puzzle of size {size}")
+        # Make all letters uppercase for uniformity
         self.wordlist = [word.upper() for word in wordlist]
         
         self.wordsearch_arr = [[None] * size for i in range(size)]
@@ -22,50 +23,54 @@ class Wordsearch_Generator:
 
 
     def generate_puzzle(self, print_puzzle=True):
+        '''Generate a new, randomized wordsearch puzzle.'''
         self.insert_words()
-        self.randomize()
+        self.random_fill()
         if print_puzzle:
             self.print_wordsearch()
 
 
     def reset_array(self):
+        '''Clear the wordsearch array by making all elements None.'''
         self.wordsearch_arr = [[None] * self.size for i in range(self.size)]
 
 
     def insert_words(self, max_tries=5):
-        '''Insert words from wordlist into random positions of array.'''
+        ''''''
         for _ in range(max_tries):
-            if self.try_insert_all_words():
+            if self.__try_insert_all_words():
                 return
             # When trying a new set of insertions, need to start with empty array
             self.reset_array()
 
         raise Exception(f"Was not able to insert all words within {max_tries} tries.")
 
-    def try_insert_all_words(self):
+
+    def __try_insert_all_words(self):
         for word in self.wordlist:
-            if not self.try_insert_single_word(word):
+            if not self.__try_insert_single_word(word):
                 return False
         return True
 
-    def try_insert_single_word(self, word):
+
+    def __try_insert_single_word(self, word):
         ''''''
-        possible_positions = self.get_possible_positions(len(word))
+        possible_positions = self.__get_possible_positions(len(word))
         while len(possible_positions) != 0:
             start = random.sample(possible_positions, 1)[0]
             possible_positions.remove(start)
-            possible_directions = self.get_possible_directions(start, word)
+            possible_directions = self.__get_possible_directions(start, word)
             if len(possible_directions) != 0:
                 (change_i, change_j), is_reversed = random.choice(possible_directions)
                 self.solution.append((word, start, (change_i, change_j), is_reversed))
                 if is_reversed:
                     word = word[::-1]
-                self.insert_word(word, start, change_i, change_j)
+                self.__insert_word(word, start, change_i, change_j)
                 return True
         return False
 
 
-    def get_possible_positions(self, word_len):
+    def __get_possible_positions(self, word_len):
         unsampled_positions = set()
         unfit_zone = self.size - word_len + 1
         for i in range(self.size):
@@ -75,13 +80,13 @@ class Wordsearch_Generator:
         return unsampled_positions
 
 
-    def get_possible_directions(self, start, word):
-        fitting_directions = self.get_fitting_directions(start, word)
-        clear_directions = self.clear_directions(start, word, fitting_directions)
+    def __get_possible_directions(self, start, word):
+        fitting_directions = self.__get_fitting_directions(start, word)
+        clear_directions = self.get_clear_directions(start, word, fitting_directions)
         return clear_directions
 
 
-    def get_fitting_directions(self, start, word):
+    def __get_fitting_directions(self, start, word):
         '''
         
         '''
@@ -99,11 +104,11 @@ class Wordsearch_Generator:
         return possible
 
 
-    def clear_directions(self, start, word, directions):
+    def get_clear_directions(self, start, word, directions):
         '''
         
         '''
-        def is_direction_clear_helper(self, start, word, direction):
+        def __is_direction_clear_helper(self, start, word, direction):
             '''
             Check if the positions extending from start,
             with given length in given direction, are all None or
@@ -125,17 +130,17 @@ class Wordsearch_Generator:
         
         clear_directions = []
         for direction in directions:
-            if is_direction_clear_helper(self, start, word, direction):
+            if __is_direction_clear_helper(self, start, word, direction):
                 clear_directions.append((direction, False))
             # try word reversed
-            if is_direction_clear_helper(self, start, word[::-1], direction):
+            if __is_direction_clear_helper(self, start, word[::-1], direction):
                 clear_directions.append((direction, True))
         return clear_directions
 
 
-    def insert_word(self, word, start, change_i, change_j):
+    def __insert_word(self, word, start, change_i, change_j):
         '''
-        Insert word into wordsearch array, overwriting if necessary.
+        Insert word into wordsearch array.
         Word needs to be able to fit into array.
         '''
         i,j = start
@@ -157,7 +162,7 @@ class Wordsearch_Generator:
             j += change_j
 
 
-    def randomize(self):
+    def random_fill(self):
         '''Replace None elts in array with random uppercase letters.'''
         for i, row in enumerate(self.wordsearch_arr):
             for j, elt in enumerate(row):
@@ -166,7 +171,7 @@ class Wordsearch_Generator:
 
 
     def print_wordsearch(self):
-        '''Print wordsearch array.'''
+        '''Print wordsearch puzzle.'''
         for row in self.wordsearch_arr:
             for char in row:
                 print(char, end=" ")
@@ -174,6 +179,7 @@ class Wordsearch_Generator:
 
 
     def print_solutions(self):
+        '''Print out the solution to the generated puzzle.'''
         for word, start, direction, reversed in self.solution:
             print(f"{word}: {start} -> {direction}, reversed: {reversed}")
 
