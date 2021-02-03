@@ -48,7 +48,7 @@ class Wordsearch_Generator:
                 possible_directions = self.get_possible_directions(start, word)
                 if len(possible_directions) != 0:
                     (change_i, change_j), is_reversed = random.choice(possible_directions)
-                    self.solution.append((word, start, (change_i, change_j)))
+                    self.solution.append((word, start, (change_i, change_j), is_reversed))
                     if is_reversed:
                         word = word[::-1]
                     self.insert_word(word, start, change_i, change_j)
@@ -171,8 +171,8 @@ class Wordsearch_Generator:
 
 
     def print_solutions(self):
-        for word, start, direction in self.solution:
-            print(f"{word}: {start} -> {direction}")
+        for word, start, direction, reversed in self.solution:
+            print(f"{word}: {start} -> {direction}, reversed: {reversed}")
 
 
 if __name__ ==  "__main__":
