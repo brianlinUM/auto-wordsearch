@@ -267,5 +267,5 @@ class WordsearchGenerator:
 
 if __name__ == "__main__":
     # "HAPPY", "APPLE", "LUCKY"
-    test = WordsearchGenerator(["HAPPY", "APPLE", "LUCKY"], size=5)
+    test = WordsearchGenerator(["HAPPY", "APPLE", "LUCKY"], size=15)
     test.generate_puzzle()
