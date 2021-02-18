@@ -132,7 +132,7 @@ class Wordsearch_Generator:
         word (str): word to be considered to insert.
         '''
         fitting_directions = self.__get_fitting_directions(start, word)
-        clear_directions = self.get_clear_directions(start, word, fitting_directions)
+        clear_directions = self.__get_clear_directions(start, word, fitting_directions)
         return clear_directions
 
 
@@ -146,19 +146,26 @@ class Wordsearch_Generator:
         '''
         i, j = start
         unfit_zone = self.size - len(word) + 1
-        possible = [(0,1), (1,0), (1,1)]
-        # Remove infeasible directions
-        i_unfit = i >= unfit_zone
-        j_unfit = j >= unfit_zone
-        if i_unfit or j_unfit:
-            possible.pop(2)
-            if i_unfit: possible.pop(1)
-            if j_unfit: possible.pop(0)
+        possible = []
+        i_fit = i < unfit_zone
+        j_fit = j < unfit_zone
+
+        if i_fit:
+            possible.append((1,0))
+            if j_fit:
+                possible.append((0,1))
+                possible.append((1,1))
+        elif j_fit:
+            # but not i_fit
+            possible.append((0,1))
+        # Check if we can add (-1,1) diagonal
+        if i >= len(word) - 1 and j_fit:
+            possible.append((-1,1))
 
         return possible
 
 
-    def get_clear_directions(self, start, word, directions):
+    def __get_clear_directions(self, start, word, directions):
         '''
         Return all the directions (orientations) that the word can be inserted with, at the given
         (start) coordinate.
@@ -212,18 +219,6 @@ class Wordsearch_Generator:
         change_j: (int): change in j for the inserting position, for each letter inserted.
         '''
         i,j = start
-        if not (-1 < i < self.size and -1 < j < self.size):
-            raise Exception("start must be valid indices of array")
-        if change_i == 0 and change_j == 0:
-            raise Exception("change in i and j can not both be 0")
-        if not (-1 < change_i < 2 and -1 < change_j < 2):
-            raise Exception("change in i and j must be either 0 or 1")
-        if (
-            i + len(word) * change_i > self.size or
-            j + len(word) * change_j > self.size
-        ):
-            raise Exception("word won't be able to fit into array")
-
         for letter in word:
             self.wordsearch_arr[i][j] = letter
             i += change_i
