@@ -60,12 +60,12 @@ class WordsearchSolver:
                     if self.puzzle[i][j] == word[0]:
                         if len(word) == 0:
                             self.solution.append((word, (i, j), (0, 0)))
-                            continue
-                        # initiate search in 8 directions
-                        result = self.__search_word((i, j), word)
-                        if result is not None:
-                            self.solution.append(
-                                (word, (i, j), self._pos_changes[result]))
+                        else:
+                            # initiate search in 8 directions
+                            result = self.__search_word((i, j), word)
+                            if result is not None:
+                                self.solution.append(
+                                    (word, (i, j), self._pos_changes[result]))
 
     def __search_word(self, pos, word):
         """
