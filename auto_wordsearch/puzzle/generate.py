@@ -55,6 +55,7 @@ class WordsearchGenerator:
     def reset_array(self):
         """Clear the wordsearch array by making all elements None."""
         self.wordsearch_arr = [[None] * self.size for i in range(self.size)]
+        self.solution = []
 
     def insert_words(self, max_tries=5):
         """
@@ -267,5 +268,7 @@ class WordsearchGenerator:
 
 if __name__ == "__main__":
     # "HAPPY", "APPLE", "LUCKY"
-    test = WordsearchGenerator(["HAPPY", "APPLE", "LUCKY"], size=15)
-    test.generate_puzzle()
+    wordlist = ["HAPPY", "APPLE", "LUCKY"]
+    puzzle = WordsearchGenerator(wordlist, size=5)
+    puzzle.generate_puzzle()
+    puzzle.print_solutions()

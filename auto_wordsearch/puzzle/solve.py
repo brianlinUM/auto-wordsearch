@@ -140,15 +140,19 @@ class WordsearchSolver:
 
         return matches
 
-    def print_solution(self):
+    def print_solutions(self):
         """Print where the words from wordlist are found."""
         for word, start, direction in self.solution:
             print(f"{word}: {start} -> {direction}")
 
 
 if __name__ == "__main__":
-    wordsearch = WordsearchGenerator(["HAPPY", "LUCKY", "APPLE"], size=15)
-    wordsearch.generate_puzzle()
-    solver = WordsearchSolver(wordsearch.wordsearch_arr, wordsearch.wordlist)
+    # Generate a random example puzzle
+    wordlist = ["HAPPY", "APPLE", "LUCKY"]
+    puzzle = WordsearchGenerator(wordlist, size=15)
+    puzzle.generate_puzzle()
+
+    # Solve the puzzle
+    solver = WordsearchSolver(puzzle.wordsearch_arr, wordlist)
     solver.solve()
-    solver.print_solution()
+    solver.print_solutions()
