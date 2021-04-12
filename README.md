@@ -15,7 +15,7 @@ puzzle = WordsearchGenerator(wordlist, size=15)
 puzzle.generate_puzzle()
 ```
 
-Will print out the puzzle below:
+Will print out a puzzle like below:
 
 <img src="./github_images/puzzle_example.jpg" width=200>
 
