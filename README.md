@@ -58,7 +58,7 @@ puzzle.generate_puzzle()
 # Solve the puzzle
 solver = WordsearchSolver(puzzle.wordsearch_arr, wordlist)
 solver.solve()
-solver.print_solution()
+solver.print_solutions()
 ```
 The format of the printed solution is almost the same as that of `WordsearchGenerator`, with the lack of the reversed boolean. The solver does not care (or know) if the word was positioned in reverse order since orientation: `(-1, 0)` reversed is the same as `(1, 0)`.
 
